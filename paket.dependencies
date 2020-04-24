@@ -1,0 +1,7 @@
+source https://api.nuget.org/v3/index.json
+
+storage: none
+framework: auto-detect
+nuget FsCheck.Xunit
+nuget FSharp.Core
+nuget Xunit

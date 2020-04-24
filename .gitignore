@@ -1,0 +1,6 @@
+﻿paket-files/
+_NCrunch*/
+bin/
+obj/
+.vs/
+*.user
