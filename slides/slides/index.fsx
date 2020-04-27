@@ -116,15 +116,15 @@ type Pack = Drum list -> Container list -> Container list option
 
 let container = 100m |> PositiveSize.get |> Container.empty
 
-let checkSize : ContainerSpecification = 
+let checkSpaceSpec : ContainerSpecification = 
     fun drum container ->failwith "not yet implemented"
 
 let water =
     { Type = Water
       Size = PositiveSize.get 10m }
 
-container |> checkSize water = Some { container with Contents = [water] }
-container |> checkSize { water with Size = PositiveSize.get 11m } = None
+container |> checkSpaceSpec water = Some { container with Contents = [water] }
+container |> checkSpaceSpec { water with Size = PositiveSize.get 11m } = None
 
 (**
 ---
@@ -132,7 +132,7 @@ container |> checkSize { water with Size = PositiveSize.get 11m } = None
 #### Small implementation
 *)
 let totalSize container = container.Contents |> List.sumBy (fun x -> x.Size)
-let checkSize : ContainerSpecification = fun drum container ->
+let checkSpaceSpec : ContainerSpecification = fun drum container ->
     if ((container |> totalSize) + drum.Size) > container.Capacity then None
     else Some container
 
@@ -180,7 +180,7 @@ let checkBiologicalSpec : ContainerSpecification =
 (**
 ---
 
-#### Composing both checkSize and checkBiologicalSpec ?
+#### Composing both checkSpaceSpec and checkBiologicalSpec ?
 
 ***
 
@@ -195,7 +195,7 @@ let checkBiologicalSpec : ContainerSpecification =
 *)
 
 let validate : ContainerSpecification = fun drum container ->
-    match checkSize drum container with
+    match checkSpaceSpec drum container with
     | None -> None
     | Some candidate -> checkBiologicalSpec drum container
 
@@ -211,7 +211,7 @@ let rule4 : ContainerSpecification =
     fun drum container -> failwith "not yet implemented"
 
 let validate : ContainerSpecification = fun drum container ->
-    match checkSize drum container with
+    match checkSpaceSpec drum container with
     | None -> None
     | Some candidate -> 
         match checkBiologicalSpec drum container with
@@ -250,7 +250,7 @@ let andThen (rule1:ContainerSpecification) (rule2:ContainerSpecification)
 *)
 
 let validate = 
-    checkSize
+    checkSpaceSpec
     |> andThen checkBiologicalSpec
     |> andThen rule3
     |> andThen rule4
@@ -266,7 +266,7 @@ let (>=>) rule1 rule2 = andThen rule1 rule2
 
 
 let validate = 
-    checkSize
+    checkSpaceSpec
     >=> checkBiologicalSpec
     >=> rule3
     >=> rule4
@@ -282,7 +282,7 @@ let validate rules : ContainerSpecification =
     rules |> List.fold andThen zero
 
 let rules : ContainerSpecification list = 
-    [ checkSize; checkBiologicalSpec; rule3; rule4 ]
+    [ checkSpaceSpec; checkBiologicalSpec; rule3; rule4 ]
 
 let allRules : ContainerSpecification = rules |> validate
 

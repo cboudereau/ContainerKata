@@ -58,11 +58,11 @@ let pack : Pack =
 
     let rec pack drums containers =
         match drums with
-        | [] -> Ok containers
+        | [] -> Some containers
         | drum::others -> 
             match tryAddDrum drum containers with
             | Some compatibles -> pack others compatibles
-            | None -> Error NoAnswerFound
+            | None -> None
 
     fun drums containers ->
         let drums = drums |> List.sortBy (fun x -> x.Type)

@@ -10,12 +10,12 @@
         let biologicalSamples = { Size=PositiveSize.get 10m; Type=BiologicalSamples }
         let sand = { Size=PositiveSize.get 10m; Type = Sand }
 
-        let [<Fact>] ``one drum larger than the container`` () = [container] |> Containers.pack [ { sand with Size = PositiveSize.get 101m } ] == Error NoAnswerFound
-        let [<Fact>] ``one incompatible container with ammonia`` ()= [container] |> Containers.pack [ammonia] == Error NoAnswerFound
-        let [<Fact>] ``one incompatible container with tnt`` ()= [container] |> Containers.pack [tnt] == Error NoAnswerFound
+        let [<Fact>] ``one drum larger than the container`` () = [container] |> Containers.pack [ { sand with Size = PositiveSize.get 101m } ] == None
+        let [<Fact>] ``one incompatible container with ammonia`` ()= [container] |> Containers.pack [ammonia] == None
+        let [<Fact>] ``one incompatible container with tnt`` ()= [container] |> Containers.pack [tnt] == None
         let [<Fact>] ``tnt and biological samples are incompatible``() = 
-            [{ container with Features = set [ ArmoredContainer ]}] |> Containers.pack [tnt; biologicalSamples] == Error NoAnswerFound
-            [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Containers.pack [ammonia; tnt; biologicalSamples] == Error NoAnswerFound
+            [{ container with Features = set [ ArmoredContainer ]}] |> Containers.pack [tnt; biologicalSamples] == None
+            [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Containers.pack [ammonia; tnt; biologicalSamples] == None
 
 namespace ``Given drums and compatible containers, ``
     open Xunit
@@ -34,19 +34,19 @@ namespace ``Given drums and compatible containers, ``
        
         let test drums containers = 
             let prune = List.sort
-            let filled = containers |> Result.get |> List.collect (fun x -> x.Contents)
+            let filled = containers |> Option.get |> List.collect (fun x -> x.Contents)
             prune filled == prune drums
 
-        let [<Fact>] ``empty containers, empty drums`` () = Containers.pack [] [] == (Ok [])
-        let [<Fact>] ``one container, empty drums`` () = Containers.pack [] [container] == Ok [container]
+        let [<Fact>] ``empty containers, empty drums`` () = Containers.pack [] [] == (Some [])
+        let [<Fact>] ``one container, empty drums`` () = Containers.pack [] [container] == Some [container]
         let [<Fact>] ``one container full after adding the sand`` () = 
-            [container] |> Containers.pack [ { sand with Size = PositiveSize.get 10m } ] == Ok [{ container with Contents = [ { sand with Size = PositiveSize.get 10m }] }]
+            [container] |> Containers.pack [ { sand with Size = PositiveSize.get 10m } ] == Some [{ container with Contents = [ { sand with Size = PositiveSize.get 10m }] }]
         let [<Fact>] ``one ventilated for ammonia`` ()=
-            [{ container with Features = set [ VentilatedContainer ] }] |> Containers.pack [ ammonia ] == Ok [{ container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }]
+            [{ container with Features = set [ VentilatedContainer ] }] |> Containers.pack [ ammonia ] == Some [{ container with Features = set [ VentilatedContainer ]; Contents = [ammonia] }]
         let [<Fact>] ``one armored container for TNT``()=
-            [{ container with Features = set [ ArmoredContainer ]}] |> Containers.pack [ tnt ] == Ok [{ container with Features=set [ ArmoredContainer ]; Contents = [tnt]}]
+            [{ container with Features = set [ ArmoredContainer ]}] |> Containers.pack [ tnt ] == Some [{ container with Features=set [ ArmoredContainer ]; Contents = [tnt]}]
         let [<Fact>] ``one armored ventilated container for ammonia and TNT``()=
-            [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Containers.pack [tnt;ammonia] == Ok [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [ammonia; tnt] }]
+            [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]}] |> Containers.pack [tnt;ammonia] == Some [{ container with Features = set [ ArmoredContainer; VentilatedContainer ]; Contents = [ammonia; tnt] }]
 
         let [<Fact>] ``multiple containers and drums``()=
             let ammonia = { ammonia with Size = PositiveSize.get 100m }
@@ -56,9 +56,9 @@ namespace ``Given drums and compatible containers, ``
             let armoredContainer = { container with Features = set [ ArmoredContainer ] }
 
             [ armoredContainer; container; ventilatedContainer ]
-            |> Containers.pack [ ammonia; sand; tnt ] == Ok [ { armoredContainer with Contents = [tnt] } 
-                                                              { container with Contents = [sand] }
-                                                              { ventilatedContainer with Contents = [ammonia] } ]
+            |> Containers.pack [ ammonia; sand; tnt ] == Some [ { armoredContainer with Contents = [tnt] } 
+                                                                { container with Contents = [sand] }
+                                                                { ventilatedContainer with Contents = [ammonia] } ]
 
         let [<Fact>] ``different sizes, but fit exactly the container capacity`` () =
             let nine = PositiveSize.get 9m

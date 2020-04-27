@@ -37,6 +37,6 @@ module Sand =
             let prune x = x |> List.sort
             prune filled = prune drums
 
-        containers |> Containers.pack drums |> Result.get |> test drums
+        containers |> Containers.pack drums |> Option.get |> test drums
         
 
