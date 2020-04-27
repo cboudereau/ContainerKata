@@ -38,7 +38,7 @@ Design matters : how it is possible to represent actual and expected behavior wh
 ## Switch to Unit Test automation
 
 ## What is the limit of our solution ?
-- Is it easy to enumerate ?
+- Is it hard to enumerate ?
 
 Add unit test to prove the allocation space problem.
 Identity through types cardinality.

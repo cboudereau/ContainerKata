@@ -1,0 +1,7 @@
+source https://nuget.org/api/v2
+
+storage: symlink
+
+nuget FsReveal
+nuget FAKE
+nuget Suave
