@@ -40,33 +40,34 @@ module Specifications =
         >=> checkAmmoniaSpec
 
 //Container functions
-let tryAdd : AddDrum = fun drum container -> 
-    Specifications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
+let pack : Pack = 
 
-let pack : Pack = fun drums containers ->
+    let tryAdd spec : ContainerSpecification = fun drum container -> 
+        spec drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
 
-    let drums = drums |> List.sortBy (fun x -> x.Type)
-
-    let containers = containers |> List.sortBy (fun x -> x.Capacity)
-
-    let tryAddContainer drum containers = 
-        let rec tryAddContainer drum incompatibles candidates = 
+    let tryAddDrum drum containers = 
+        let rec tryAddToContainer drum incompatibles candidates = 
             match candidates with
             | [] -> None
             | candidate::others -> 
-                match tryAdd drum candidate with
-                | None -> tryAddContainer drum (candidate :: incompatibles) others
+                match tryAdd Specifications.validate drum candidate with
+                | None -> tryAddToContainer drum (candidate :: incompatibles) others
                 | Some compatible -> Some (List.append (List.rev (compatible :: incompatibles)) others)
 
-        tryAddContainer drum [] containers
+        tryAddToContainer drum [] containers
 
     let rec pack drums containers =
         match drums with
         | [] -> Ok containers
         | drum::others -> 
-            match tryAddContainer drum containers with
+            match tryAddDrum drum containers with
             | Some compatibles -> pack others compatibles
             | None -> Error NoAnswerFound
 
-    pack drums containers
+    fun drums containers ->
+        let drums = drums |> List.sortBy (fun x -> x.Type)
+
+        let containers = containers |> List.sortBy (fun x -> x.Capacity)
+
+        pack drums containers
 

@@ -11,7 +11,6 @@ and Positive = interface end //FSharp Phantom type
 //Services
 type ContainerSpecification = Drum -> Container -> Container option
 type PackingError = NoAnswerFound
-type AddDrum = Drum -> Container -> Container option
 //Now, no need to use exception when the return type is a value or a business error. The business error appears clearly into the DDD service
 type Pack = Drum list -> Container list -> Result<Container list, PackingError>
 

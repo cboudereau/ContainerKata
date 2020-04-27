@@ -88,6 +88,7 @@ namespace ``Given drums and compatible containers, ``
             Containers.pack drums containers |> test drums 
 
         //Test extracted from PropertyBasedTests
+        //https://en.wikipedia.org/wiki/Knapsack_problem
         let ``2 are bigger than others`` () =
             let nine = PositiveSize.get 9m
             let ten = PositiveSize.get 10m

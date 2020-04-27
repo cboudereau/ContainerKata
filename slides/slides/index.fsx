@@ -54,16 +54,16 @@ actual |> should equal expected
 ---
 #### Domain Types
 *)
+module Version1 = 
+    type Chemical = Water
 
-type Chemical = Water
+    type Drum = 
+        { Type : Chemical
+          Size : decimal }
 
-type Drum = 
-    { Type : Chemical
-      Size : decimal }
-
-type Container = 
-    { Capacity : decimal 
-      Drums : Drum list }
+    type Container = 
+        { Capacity : decimal 
+          Contents : Drum list }
 
 (**
 ---
@@ -94,10 +94,10 @@ type Drum =
 
 type Container = 
     { Capacity : PositiveSize 
-      Drums : Drum list }
+      Contents : Drum list }
 
 module Container =
-    let empty capacity = { Capacity=capacity; Drums = [] } 
+    let empty capacity = { Capacity=capacity; Contents = [] } 
 
 (**
 ---
@@ -123,7 +123,7 @@ let water =
     { Type = Water
       Size = PositiveSize.get 10m }
 
-container |> checkSize water = Some { container with Drums = [water] }
+container |> checkSize water = Some { container with Contents = [water] }
 container |> checkSize { water with Size = PositiveSize.get 11m } = None
 
 (**
@@ -131,7 +131,7 @@ container |> checkSize { water with Size = PositiveSize.get 11m } = None
 
 #### Small implementation
 *)
-let totalSize container = container.Drums |> List.sumBy (fun x -> x.Size)
+let totalSize container = container.Contents |> List.sumBy (fun x -> x.Size)
 let checkSize : ContainerSpecification = fun drum container ->
     if ((container |> totalSize) + drum.Size) > container.Capacity then None
     else Some container
@@ -149,13 +149,13 @@ let biologicalSample = { Type = TNT; Size = PositiveSize.get 1m }
 
 let checkBiologicalSpec : ContainerSpecification = failwith "not yet implemented"
 
-{ container with Drums = [ tnt ] } 
+{ container with Contents = [ tnt ] } 
 |> checkBiologicalSpec biologicalSample = None
 
-{ container with Drums = [ biologicalSample ] } 
+{ container with Contents = [ biologicalSample ] } 
 |> checkBiologicalSpec tnt = None
 
-let expected = Some { container with Drums = [ biologicalSample ] }
+let expected = Some { container with Contents = [ biologicalSample ] }
 container 
 |> checkBiologicalSpec biologicalSample = expected
     
@@ -173,7 +173,7 @@ let checkBiologicalSpec : ContainerSpecification =
         | TNT, BiologicalSample | BiologicalSample, TNT -> false
         | _ -> true
     fun drum container ->
-        if container.Drums |> List.forall (fun x -> spec x.Type drum.Type) then
+        if container.Contents |> List.forall (fun x -> spec x.Type drum.Type) then
             Some container 
         else None
 
