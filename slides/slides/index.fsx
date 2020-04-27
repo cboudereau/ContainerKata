@@ -311,7 +311,7 @@ Function composition all the way down!
 
 ***
 
-### Property Based Testing
+### When using Property Based Testing ?
 - Is it hard to enumerate ?
 - What are properties ?
 - Is it easy to prove ?

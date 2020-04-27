@@ -10,8 +10,6 @@
         let biologicalSamples = { Size=PositiveSize.get 10m; Type=BiologicalSamples }
         let sand = { Size=PositiveSize.get 10m; Type = Sand }
 
-        let [<Fact>] ``empty containers, empty drums`` () = Containers.pack [] [] == (Ok [])
-        let [<Fact>] ``one container, empty drums`` () = Containers.pack [] [container] == Ok [container]
         let [<Fact>] ``one drum larger than the container`` () = [container] |> Containers.pack [ { sand with Size = PositiveSize.get 101m } ] == Error NoAnswerFound
         let [<Fact>] ``one incompatible container with ammonia`` ()= [container] |> Containers.pack [ammonia] == Error NoAnswerFound
         let [<Fact>] ``one incompatible container with tnt`` ()= [container] |> Containers.pack [tnt] == Error NoAnswerFound
@@ -39,6 +37,8 @@ namespace ``Given drums and compatible containers, ``
             let filled = containers |> Result.get |> List.collect (fun x -> x.Contents)
             prune filled == prune drums
 
+        let [<Fact>] ``empty containers, empty drums`` () = Containers.pack [] [] == (Ok [])
+        let [<Fact>] ``one container, empty drums`` () = Containers.pack [] [container] == Ok [container]
         let [<Fact>] ``one container full after adding the sand`` () = 
             [container] |> Containers.pack [ { sand with Size = PositiveSize.get 10m } ] == Ok [{ container with Contents = [ { sand with Size = PositiveSize.get 10m }] }]
         let [<Fact>] ``one ventilated for ammonia`` ()=
