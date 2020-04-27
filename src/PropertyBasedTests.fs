@@ -39,5 +39,3 @@ module Sand =
             prune filled = prune drums
 
         containers |> Containers.pack drums |> Option.get |> test drums
-        
-

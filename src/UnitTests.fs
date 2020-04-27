@@ -22,9 +22,6 @@ namespace ``Given drums and compatible containers, ``
     open Domain
     open Core.Operators
 
-    module Result = 
-        let get = function Ok x -> x | e -> failwithf "expected Ok, got %A" e
-
     module ``when packing them, then expect filled containers`` =
         let container = { Capacity = PositiveSize.get 100m; Contents = []; Features = set [] }
         let ammonia = { Size=PositiveSize.get 10m; Type=Ammonia } 

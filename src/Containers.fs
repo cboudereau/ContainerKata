@@ -1,10 +1,6 @@
 ﻿module Containers
 open Domain
 
-let size container = 
-    container.Contents 
-    |> List.fold (fun s x -> s + x.Size) PositiveSize.Zero
-
 module Specifications = 
     //Container spectification spec combinator (kleisli) : spec1 AND spec2
     let (>=>) (spec1:ContainerSpecification) (spec2:ContainerSpecification) : ContainerSpecification = fun drum container -> spec1 drum container |> Option.bind (spec2 drum)
@@ -12,7 +8,7 @@ module Specifications =
     //The main validate function which is a composition of specifications
     let validate : ContainerSpecification = 
         let checkSpaceSpec : ContainerSpecification = fun drum container -> 
-            if size container + drum.Size > container.Capacity then None
+            if Container.size container + drum.Size > container.Capacity then None
             else Some container
 
         let checkBiologicalSpec : ContainerSpecification =
