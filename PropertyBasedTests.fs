@@ -31,7 +31,7 @@ module Sand =
                 return drums |> Array.toList, containers |> Array.toList
             } |> Arb.fromGen 
 
-    let [<Property (Arbitrary=[| typeof<FullContainer> |])>] ``Given drums which fit exactly in containers, when packing them, then expect all containers full of drums`` (drums, containers) =
+    let [<Property (Arbitrary=[| typeof<FullContainer> |])>] ``Given drums which fit exactly in containers, when packing them, then expect all containers full filled`` (drums, containers) =
         let test drums containers = 
             let filled = containers |> List.collect (fun x -> x.Contents)
             let prune x = x |> List.sort
