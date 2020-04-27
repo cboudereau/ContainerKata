@@ -41,33 +41,20 @@ module Specifications =
 
 //Container functions
 let pack : Pack = 
+    let tryAdd drum container =
+        Specifications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
 
-    let tryAdd spec : ContainerSpecification = fun drum container -> 
-        spec drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
-
-    let tryAddDrum drum containers = 
-        let rec tryAddToContainer drum incompatibles candidates = 
-            match candidates with
-            | [] -> None
-            | candidate::others -> 
-                match tryAdd Specifications.validate drum candidate with
-                | None -> tryAddToContainer drum (candidate :: incompatibles) others
-                | Some compatible -> Some (List.append (List.rev (compatible :: incompatibles)) others)
-
-        tryAddToContainer drum [] containers
-
-    let rec pack drums containers =
-        match drums with
-        | [] -> Some containers
-        | drum::others -> 
-            match tryAddDrum drum containers with
-            | Some compatibles -> pack others compatibles
-            | None -> None
-
+    let rec pack drums packed candidates = 
+        match drums, candidates with
+        | [], [] -> Some packed
+        | [], candidates -> Some (List.append packed candidates)
+        | _::_, [] -> None
+        | drum::drums, candidate::candidates ->
+            match tryAdd drum candidate with
+            | None -> pack (drum::drums) (candidate::packed) candidates
+            | Some candidate -> pack drums [] (List.append packed (candidate::candidates))
+    
     fun drums containers ->
         let drums = drums |> List.sortBy (fun x -> x.Type)
-
         let containers = containers |> List.sortBy (fun x -> x.Capacity)
-
-        pack drums containers
-
+        pack drums [] containers

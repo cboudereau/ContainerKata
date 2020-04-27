@@ -54,11 +54,12 @@ namespace ``Given drums and compatible containers, ``
             let tnt = { tnt with Size = PositiveSize.get 100m }
             let ventilatedContainer = { container with Features = set [ VentilatedContainer ] }
             let armoredContainer = { container with Features = set [ ArmoredContainer ] }
+            
+            let drums = [ ammonia; sand; tnt ]
 
             [ armoredContainer; container; ventilatedContainer ]
-            |> Containers.pack [ ammonia; sand; tnt ] == Some [ { armoredContainer with Contents = [tnt] } 
-                                                                { container with Contents = [sand] }
-                                                                { ventilatedContainer with Contents = [ammonia] } ]
+            |> Containers.pack drums 
+            |> test drums
 
         let [<Fact>] ``different sizes, but fit exactly the container capacity`` () =
             let nine = PositiveSize.get 9m

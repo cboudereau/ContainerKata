@@ -30,7 +30,8 @@ module Sand =
                 let! drums = Gen.shuffle drums
                 return drums |> Array.toList, containers |> Array.toList
             } |> Arb.fromGen 
-
+    
+    //https://en.wikipedia.org/wiki/Knapsack_problem#Meet-in-the-middle
     let [<Property (Arbitrary=[| typeof<FullContainer> |])>] ``Given drums which fit exactly in containers, when packing them, then expect all containers full filled`` (drums, containers) =
         let test drums containers = 
             let filled = containers |> List.collect (fun x -> x.Contents)
