@@ -14,7 +14,7 @@ module Sand =
                             Gen.elements [ 1m .. 1m .. 10m ]
                             |> Gen.listOfLength 1 //Change this parameter to 2 to get the issue
                             |> Gen.map (List.map (fun x -> { Type=Sand; Size = PositiveSize.get x }))
-                        let totalSize = drums |> List.fold (fun x y -> x + y.Size) PositiveSize.Zero
+                        let totalSize = drums |> List.sumBy (fun x -> x.Size)
                         let container = Container.empty totalSize Set.empty
                         return container, drums }
 
