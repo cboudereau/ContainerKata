@@ -3,7 +3,13 @@ open Domain
 
 module Specifications = 
     //Container spectification spec combinator (kleisli) : spec1 AND spec2
-    let (>=>) (spec1:ContainerSpecification) (spec2:ContainerSpecification) : ContainerSpecification = fun drum container -> spec1 drum container |> Option.bind (spec2 drum)
+    let andThen (spec2:ContainerSpecification) (spec1:ContainerSpecification) 
+        : ContainerSpecification = fun drum container ->
+        match spec1 drum container with
+        | Some candidate -> spec2 drum candidate
+        | None -> None 
+    
+    let (>=>) (spec1:ContainerSpecification) (spec2:ContainerSpecification) : ContainerSpecification = andThen spec2 spec1 
     
     //The main validate function which is a composition of specifications
     let validate : ContainerSpecification = 

@@ -205,9 +205,9 @@ let validate : ContainerSpecification = fun drum container ->
 #### What if adding more and more rules ?
 *)
 
-let rule3 : ContainerSpecification = 
+let spec3 : ContainerSpecification = 
     fun drum container -> failwith "not yet implemented"
-let rule4 : ContainerSpecification = 
+let spec4 : ContainerSpecification = 
     fun drum container -> failwith "not yet implemented"
 
 let validate : ContainerSpecification = fun drum container ->
@@ -217,9 +217,9 @@ let validate : ContainerSpecification = fun drum container ->
         match checkBiologicalSpec drum container with
         | None -> None
         | Some candidate -> 
-            match rule3 drum candidate with
+            match spec3 drum candidate with
             | None -> None
-            | Some candidate -> rule4 drum candidate
+            | Some candidate -> spec4 drum candidate
 
 (**
 ---
@@ -236,10 +236,10 @@ How to reduce complexity ?
 
 *)
 
-let andThen (rule1:ContainerSpecification) (rule2:ContainerSpecification) 
+let andThen (spec2:ContainerSpecification) (spec1:ContainerSpecification) 
     : ContainerSpecification = fun drum container ->
-    match rule1 drum container with
-    | Some candidate -> rule2 drum candidate
+    match spec1 drum container with
+    | Some candidate -> spec2 drum candidate
     | None -> None
 
 (**
@@ -252,8 +252,8 @@ let andThen (rule1:ContainerSpecification) (rule2:ContainerSpecification)
 let validate = 
     checkSpaceSpec
     |> andThen checkBiologicalSpec
-    |> andThen rule3
-    |> andThen rule4
+    |> andThen spec3
+    |> andThen spec4
 
 (**
 ---
@@ -262,14 +262,14 @@ let validate =
 
 *)
 
-let (>=>) rule1 rule2 = andThen rule1 rule2
+let (>=>) spec1 spec2 = andThen spec2 spec1
 
 
 let validate = 
     checkSpaceSpec
     >=> checkBiologicalSpec
-    >=> rule3
-    >=> rule4
+    >=> spec3
+    >=> spec4
 
 (**
 ---
@@ -282,7 +282,7 @@ let validate rules : ContainerSpecification =
     rules |> List.fold andThen zero
 
 let rules : ContainerSpecification list = 
-    [ checkSpaceSpec; checkBiologicalSpec; rule3; rule4 ]
+    [ checkSpaceSpec; checkBiologicalSpec; spec3; spec4 ]
 
 let allRules : ContainerSpecification = rules |> validate
 
@@ -294,7 +294,7 @@ let allRules : ContainerSpecification = rules |> validate
 Function composition all the way down!
 
 ' S : Single responsability : one function to do one thing
-' O : one function "andThen" to open for extension but rules functions are not modifiable
+' O : one function "andThen" to open for extension but ContainerSpecifications are not modifiable
 ' L : Only one "ContainerSpecification" type and different implementations
 ' I : the function type is the Interface
 ' D : Dependency inversion by using function composition
