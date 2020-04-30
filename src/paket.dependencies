@@ -5,3 +5,4 @@ framework: auto-detect
 nuget FsCheck.Xunit
 nuget FSharp.Core
 nuget Xunit
+nuget xunit.runner.visualstudio
