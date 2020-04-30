@@ -115,6 +115,9 @@
 <p><em>"Find the best solution to pack drums into containers by respecting the following rules"</em></p>
 </section>
 <section >
+<p>Bear with me by cloning : <a href="https://github.com/cboudereau/ContainerKata">https://github.com/cboudereau/ContainerKata</a> , and turn it into a <strong>hands-on</strong> if you prefer!</p>
+</section>
+<section >
 <h4>Rules</h4>
 <ul>
 <li>The <strong>container</strong> has a <strong>capacity</strong> limit and drums have different <strong>size</strong></li>
@@ -512,7 +515,7 @@ Does Size multiplied by Size matter ?
 <p>Function composition all the way down!</p>
 <aside class="notes">
 S : Single responsability : one function to do one thing<br/>
-O : one function "andThen" to open for extension but rules functions are not modifiable<br/>
+O : one function "andThen" to open for extension but ContainerSpecifications are not modifiable<br/>
 L : Only one "ContainerSpecification" type and different implementations<br/>
 I : the function type is the Interface<br/>
 D : Dependency inversion by using function composition<br/>
