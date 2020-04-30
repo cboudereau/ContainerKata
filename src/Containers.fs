@@ -14,4 +14,18 @@ module Specifications =
 //Container functions
 let pack : Pack = 
     fun drums containers ->
-        failwith "not yet implemented" 
+        let tryAdd drum container = 
+            Specifications.validate drum container |> Option.map (fun c -> { c with Contents = drum :: c.Contents })
+        
+        let rec pack drums packed containers = 
+            match drums, containers with
+            | [], [] -> Some packed
+            | [], candidates -> Some (List.append packed candidates)
+            | _ :: _, [] -> None
+            | drum :: drums, candidate :: candidates ->
+                match tryAdd drum candidate with
+                | Some candidate -> pack drums [] (List.append packed (candidate :: candidates)) 
+                | None -> pack (drum::drums) (candidate::packed) candidates
+            
+        
+        pack drums [] containers

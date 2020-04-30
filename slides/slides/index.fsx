@@ -14,6 +14,10 @@
 
 ---
 
+Bear with me by cloning : https://github.com/cboudereau/ContainerKata , and turn it into a **hands-on** if you prefer!
+
+---
+
 #### Rules 
 - The **container** has a **capacity** limit and drums have different **size**
 - All **chemicals** in a container cannot exceed the **capacity** limit.
@@ -69,8 +73,8 @@ module Version1 =
 ---
 
 #### Primitive obsession : Potential bugs !
-- Does the Size be **negative** ?
-- Does Size multiplied by Size matter ?
+- Can the Size be **negative** ?
+- Can Size multiplied by Size matter ?
 ...
 
 ---
@@ -116,6 +120,14 @@ type Pack = Drum list -> Container list -> Container list option
 
 let container = 100m |> PositiveSize.get |> Container.empty
 
+
+let add x y = x + y
+
+1
+|> add 2
+|> add 3
+
+
 let checkSpaceSpec : ContainerSpecification = 
     fun drum container ->failwith "not yet implemented"
 
@@ -124,7 +136,7 @@ let water =
       Size = PositiveSize.get 10m }
 
 container |> checkSpaceSpec water = Some { container with Contents = [water] }
-container |> checkSpaceSpec { water with Size = PositiveSize.get 11m } = None
+container |> checkSpaceSpec { water with Size = PositiveSize.get 101m } = None
 
 (**
 ---
@@ -145,7 +157,7 @@ let checkSpaceSpec : ContainerSpecification = fun drum container ->
 
 type Chemical = Water | TNT | BiologicalSample
 let tnt = { Type = TNT; Size = PositiveSize.get 1m }
-let biologicalSample = { Type = TNT; Size = PositiveSize.get 1m }
+let biologicalSample = { Type = BiologicalSample; Size = PositiveSize.get 1m }
 
 let checkBiologicalSpec : ContainerSpecification = failwith "not yet implemented"
 
@@ -197,7 +209,7 @@ let checkBiologicalSpec : ContainerSpecification =
 let validate : ContainerSpecification = fun drum container ->
     match checkSpaceSpec drum container with
     | None -> None
-    | Some candidate -> checkBiologicalSpec drum container
+    | Some candidate -> checkBiologicalSpec drum candidate
 
 (**
 ---
