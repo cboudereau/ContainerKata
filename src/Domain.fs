@@ -16,7 +16,6 @@ type Pack = Drum list -> Container list -> Container list option
 module PositiveSize =
     let build x = if x >= 0m then Some (PositiveSize x) else None
     let get x = build x |> function Some x -> x | None -> failwith "expected a positive size"
-    let value (PositiveSize x) = x
 
 module Container = 
     let empty capacity features = { Capacity=capacity; Features=features; Contents = [] }
